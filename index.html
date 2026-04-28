@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>💙 緣分測驗（男生版）</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet" />
+<style>
+:root{--bg:#eef4fd;--card:#f8fbff;--blue:#7aaed4;--blue2:#aaccec;--blue3:#d8eaf8;--accent:#4a84b8;--accent2:#2d6090;--muted:#5a7a90;--text:#253545;--green:#7ab870;--shadow:rgba(74,132,184,0.15);}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+body{font-family:'Nunito','Noto Sans TC',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;}
+.bbg{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden;}
+.fb{position:absolute;border-radius:50%;animation:floatUp linear infinite;opacity:0;}
+@keyframes floatUp{0%{transform:translateY(0) translateX(0) scale(1);opacity:0;}10%{opacity:.45;}50%{transform:translateY(-45vh) translateX(var(--drift)) scale(1.05);}90%{opacity:.18;}100%{transform:translateY(-100vh) translateX(var(--drift)) scale(.7);opacity:0;}}
+.wrap{position:relative;z-index:1;max-width:480px;margin:0 auto;padding:1.5rem 1rem 5rem;}
+.header{text-align:center;margin-bottom:1.4rem;}
+.pingu-wrap{position:relative;width:100px;height:100px;margin:0 auto .8rem;}
+.pingu-svg{width:100px;height:100px;animation:wobble 3s ease-in-out infinite;filter:drop-shadow(0 6px 14px rgba(74,132,184,.4));}
+.speech{position:absolute;top:-14px;right:-32px;background:var(--card);border:2px solid var(--blue2);border-radius:14px 14px 14px 4px;padding:4px 10px;font-size:.72rem;font-weight:800;color:var(--accent);white-space:nowrap;box-shadow:0 3px 10px var(--shadow);}
+@keyframes wobble{0%,100%{transform:rotate(-4deg) translateY(0)}25%{transform:rotate(4deg) translateY(-5px)}75%{transform:rotate(2deg) translateY(-7px)}}
+.header h1{font-size:1.65rem;font-weight:800;color:var(--accent);line-height:1.25;margin-bottom:.35rem;}
+.header p{font-size:.84rem;color:var(--muted);line-height:1.6;}
+.loading{text-align:center;padding:3rem 1rem;}
+.loading .spin{width:44px;height:44px;border-radius:50%;border:4px solid var(--blue3);border-top-color:var(--accent);animation:spin .8s linear infinite;margin:0 auto 1rem;}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading p{font-size:.9rem;color:var(--muted);font-weight:600;}
+.err-card{background:var(--card);border:1.5px solid var(--blue2);border-radius:18px;padding:1.5rem;text-align:center;}
+.err-card p{font-size:.88rem;color:var(--muted);line-height:1.6;margin-bottom:1rem;}
+.btn-retry{padding:.8rem 1.8rem;border-radius:14px;border:2px solid var(--accent);background:transparent;color:var(--accent);font-size:.9rem;font-weight:800;cursor:pointer;}
+.prog{margin-bottom:1.2rem;}
+.prog-meta{display:flex;justify-content:space-between;font-size:.72rem;font-weight:700;color:var(--muted);margin-bottom:.4rem;}
+.prog-bar{height:8px;background:var(--blue3);border-radius:99px;overflow:hidden;}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--blue),var(--accent));border-radius:99px;transition:width .3s ease;}
+.intro{background:var(--card);border:1.5px solid var(--blue3);border-radius:22px;padding:1.1rem;box-shadow:0 4px 20px var(--shadow);margin-bottom:1rem;}
+.intro-title{font-size:1rem;font-weight:800;color:var(--accent);margin-bottom:.7rem;text-align:center;}
+.intro-grid{display:grid;grid-template-columns:1fr;gap:.6rem;margin-bottom:.9rem;}
+.intro-card{background:linear-gradient(135deg,#f0f7ff,#eaf3ff);border:1.5px solid var(--blue3);border-radius:14px;padding:.75rem .85rem;}
+.intro-card .k{font-size:.78rem;font-weight:800;color:var(--accent);margin-bottom:.2rem;}
+.intro-card .d{font-size:.82rem;color:var(--muted);line-height:1.55;}
+.qcard{background:var(--card);border:1.5px solid var(--blue3);border-radius:22px;padding:1.4rem 1.2rem 1.1rem;box-shadow:0 4px 20px var(--shadow);margin-bottom:1rem;}
+.qnum{display:inline-block;background:var(--blue3);color:var(--accent);font-size:.68rem;font-weight:800;padding:2px 12px;border-radius:99px;margin-bottom:.6rem;}
+.qsec{display:inline-block;background:linear-gradient(135deg,#dceaf8,#eef6ff);color:var(--accent);font-size:.72rem;font-weight:800;padding:5px 12px;border-radius:999px;margin-bottom:.65rem;border:1px solid var(--blue2);}
+.qtxt{font-size:1rem;font-weight:700;color:var(--text);line-height:1.55;margin-bottom:.4rem;}
+.qhint{font-size:.76rem;color:var(--muted);font-weight:600;margin-bottom:.85rem;line-height:1.5;}
+.opts{display:flex;flex-direction:column;gap:.5rem;}
+.opt{display:flex;align-items:flex-start;gap:.75rem;padding:.8rem .95rem;border:2px solid var(--blue3);border-radius:14px;cursor:pointer;font-size:.88rem;font-weight:600;color:var(--muted);background:var(--bg);text-align:left;line-height:1.5;width:100%;transition:border-color .12s,background .12s,color .12s;touch-action:manipulation;}
+.opt.sel{border-color:var(--accent);background:linear-gradient(135deg,#eef6ff,#dceaf8);color:var(--text);}
+.rdot{width:18px;height:18px;flex-shrink:0;border-radius:6px;border:2.5px solid var(--blue2);margin-top:2px;display:flex;align-items:center;justify-content:center;}
+.opt.sel .rdot{border-color:var(--accent);background:var(--accent);}
+.opt.sel .rdot::after{content:'✓';font-size:11px;font-weight:800;color:white;}
+.age-range{display:grid;grid-template-columns:1fr auto 1fr;gap:.5rem;align-items:center;}
+.age-range span{text-align:center;font-weight:800;color:var(--muted);font-size:.9rem;}
+.tinp{width:100%;padding:.85rem 1rem;border:2px solid var(--blue3);border-radius:14px;background:var(--bg);font-size:1rem;font-weight:700;color:var(--text);outline:none;transition:border-color .15s;text-align:center;}
+.tinp:focus{border-color:var(--accent);background:var(--card);}
+.nav{display:flex;gap:.65rem;}
+.btn{flex:1;padding:.85rem;border-radius:14px;border:none;font-size:.95rem;font-weight:800;cursor:pointer;touch-action:manipulation;}
+.bprev{background:var(--card);border:2px solid var(--blue3);color:var(--muted);}
+.bnext{background:linear-gradient(135deg,var(--accent),var(--accent2));color:white;box-shadow:0 4px 16px rgba(74,132,184,.4);}
+.bnext:disabled{opacity:.38;cursor:not-allowed;}
+.start-cta{animation:ctaPulse 1.9s ease-in-out infinite;}
+@keyframes ctaPulse{0%,100%{transform:translateY(0) scale(1);}45%{transform:translateY(-2px) scale(1.02);}70%{transform:translateY(0) scale(1);}}
+.rcard{background:var(--card);border:3px solid var(--accent);border-radius:24px;padding:2rem 1.5rem;text-align:center;box-shadow:0 12px 40px rgba(74,132,184,.3),0 0 0 6px rgba(184,208,232,.35);position:relative;overflow:hidden;animation:resultPop .9s ease both;}
+.rcard::before{content:'';position:absolute;top:0;left:0;right:0;height:6px;background:linear-gradient(90deg,var(--blue2),var(--accent),var(--blue));}
+@keyframes resultPop{from{transform:scale(.92);opacity:.2}to{transform:scale(1);opacity:1}}
+.rbadge{font-size:.68rem;font-weight:800;letter-spacing:.14em;color:var(--accent);text-transform:uppercase;margin-bottom:.6rem;}
+.rprivate{display:inline-flex;align-items:center;gap:.4rem;background:var(--blue3);color:var(--accent);font-size:.82rem;font-weight:700;padding:.5rem 1.2rem;border-radius:99px;margin-top:.5rem;}
+.brst{width:100%;padding:.9rem;border-radius:14px;border:2px solid var(--accent);background:transparent;color:var(--accent);font-size:.95rem;font-weight:800;cursor:pointer;margin-top:1rem;}
+.saving{text-align:center;font-size:.76rem;font-weight:700;color:var(--muted);margin-top:.6rem;min-height:1.1rem;}
+.saving.ok{color:var(--green);}.saving.err{color:#c07070;}
+</style>
+</head>
+<body>
+<div class="bbg" id="bbg"></div>
+<div class="wrap">
+  <div class="header">
+    <div class="pingu-wrap">
+      <svg class="pingu-svg" viewBox="0 0 120 140" xmlns="http://www.w3.org/2000/svg">
+        <ellipse cx="60" cy="96" rx="34" ry="40" fill="#1a1a1a"/><ellipse cx="60" cy="102" rx="22" ry="28" fill="#f5f0e8"/>
+        <circle cx="60" cy="52" r="32" fill="#1a1a1a"/><ellipse cx="60" cy="56" rx="20" ry="18" fill="#f5f0e8"/>
+        <circle cx="52" cy="48" r="9" fill="white"/><circle cx="52" cy="48" r="6" fill="#1a1a1a"/><circle cx="54" cy="46" r="2.5" fill="white"/>
+        <circle cx="68" cy="48" r="9" fill="white"/><circle cx="68" cy="48" r="6" fill="#1a1a1a"/><circle cx="70" cy="46" r="2.5" fill="white"/>
+        <ellipse cx="60" cy="63" rx="11" ry="9" fill="#d44444"/><ellipse cx="60" cy="60" rx="8" ry="5" fill="#e86666"/>
+        <path d="M51 63 Q60 69 69 63" fill="none" stroke="#b03030" stroke-width="1.5" stroke-linecap="round"/>
+        <ellipse cx="26" cy="100" rx="10" ry="22" fill="#1a1a1a" transform="rotate(-15 26 100)"/>
+        <ellipse cx="94" cy="100" rx="10" ry="22" fill="#1a1a1a" transform="rotate(15 94 100)"/>
+        <ellipse cx="48" cy="134" rx="12" ry="6" fill="#d4a030" transform="rotate(-10 48 134)"/>
+        <ellipse cx="72" cy="134" rx="12" ry="6" fill="#d4a030" transform="rotate(10 72 134)"/>
+        <polygon points="60,68 56,78 60,88 64,78" fill="#4a84b8"/>
+        <polygon points="58,68 62,68 61,74 59,74" fill="#2d6090"/>
+      </svg>
+      <div class="speech">Noot Noot! 💙</div>
+    </div>
+    <h1>你的理想女生在哪？</h1>
+    <p>完成測驗，找出最適合你的對象 💙</p>
+  </div>
+  <div id="app"></div>
+</div>
+<script>
+const SCRIPT_URL='https://script.google.com/macros/s/AKfycbxivXaOPoFItLGHqqlCQdtDRuiCIVRKO2RPhI6ndur8PG1hoOIEILPV3Dk7q4QDUlXCzA/exec';
+
+// 題目 label 轉換（女生視角 → 男生視角）
+const LABEL_MAP={
+  '我的職業類別':             '女生職業？',
+  '出門狀態':                 '你希望女生出門化妝的習慣？',
+  '外貌':                     '你希望女生的膚色？',
+  '皮膚狀態':                 '你希望女生的皮膚狀態？',
+  '性格':                     '你希望女生的個性偏向？',
+  '體毛管理':                 '你希望女生的體毛管理習慣？',
+  '氣味管理':                 '你希望女生對氣味的管理？',
+  '情侶相處關係_1':           '你對節日儀式感的態度？',
+  '情侶相處關係_2':           '女生遇到感情衝突時的方式？',
+  '網路現實觀':               '女生的社群使用習慣？',
+  '對未來的想法':             '女生對未來婚育的想法？',
+  '指甲習慣':                 '你希望女生的指甲習慣？',
+  '家庭關係':                 '你希望女生和家人的關係？',
+  '情侶金錢觀':               '女生對情侶金錢分擔的看法？',
+  '是否會在意男生抽菸':       '你會抽菸嗎？',
+  '你希望男生的身高範圍':     '你的身高範圍？',
+  '你希望男生的作息':         '你的作息習慣？',
+  '你希望男生的休假頻率':     '你的休假頻率？',
+  '你能希望男生的喝酒習慣':   '你的喝酒習慣？',
+  '你希望男生跟你假日怎麼過': '你希望情侶假日怎麼過？',
+  '你希望男生的飲食觀':       '你的飲食習慣？',
+  '你希望男生的飲食習慣':     '你的飲食習慣？',
+  '你希望的男生的交友觀':     '你的交友圈狀況？',
+  '你希望的男生經濟狀況':     '你目前的經濟狀況？',
+  '你希望男生的金錢價值觀':   '你的金錢價值觀？',
+  '你希望男生的感情溝通':     '你在感情中的溝通方式？',
+  '你希望男生的性愛觀':       '你對性愛頻率的想法？',
+  '你希望男生如何發展未來意願':'你對這段感情的期待發展？',
+};
+
+// 不顯示的題目
+const HIDDEN_IDS=['我的小名','我的年齡'];
+
+// section 對調
+function flipSection(sec){
+  if(sec==='關於我')return '關於你喜歡的女生';
+  if(sec==='關於你喜歡的男生')return '關於我';
+  return sec;
+}
+
+// 「關於你喜歡的女生」段最前面要插入的年齡區間題
+const AGE_RANGE_Q={
+  id:'__ageRange__',
+  label:'你希望女生的年齡區間？',
+  section:'關於你喜歡的女生',
+  type:'ageRange',
+  scorable:false,
+  opts:[]
+};
+
+// 「關於我」段要插入的抽菸題（來自 LABEL_MAP 轉換後是「你會抽菸嗎？」）
+// 這題本來在「關於你喜歡的女生」，我們在 flipSection 後把它移到「關於我」
+const MOVE_TO_MINE=['是否會在意男生抽菸'];
+
+let QS=[],qi=0;
+const ans={};
+let done=false,started=false,pendingSectionIntro='';
+const app=document.getElementById('app');
+
+(function(){
+  const bg=document.getElementById('bbg');if(!bg)return;
+  const colors=['rgba(74,132,184,0.18)','rgba(170,204,236,0.22)','rgba(140,170,200,0.16)','rgba(216,234,248,0.32)'];
+  for(let i=0;i<26;i++){
+    const b=document.createElement('div');b.className='fb';
+    const sz=10+Math.random()*30,dur=9+Math.random()*14,delay=Math.random()*12,drift=(Math.random()-.5)*90;
+    b.style.cssText='width:'+sz+'px;height:'+sz+'px;left:'+(Math.random()*100)+'%;bottom:-'+sz+'px;background:'+colors[Math.floor(Math.random()*colors.length)]+';--drift:'+drift+'px;animation-duration:'+dur+'s;animation-delay:'+delay+'s;border:1px solid rgba(255,255,255,.4);';
+    bg.appendChild(b);
+  }
+})();
+
+function esc(v){return String(v==null?'':v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
+function showLoading(){app.innerHTML='<div class="loading"><div class="spin"></div><p>正在載入題目中…</p></div>';}
+function showError(msg){app.innerHTML='<div class="err-card"><p>😟 '+esc(msg)+'</p><button class="btn-retry" onclick="boot()">重新載入</button></div>';}
+
+function boot(){
+  showLoading();
+  const cb='_boyquiz_'+Date.now(),tag=document.createElement('script');
+  let loaded=false;
+  const timeout=setTimeout(function(){if(loaded)return;loaded=true;cleanup();showError('載入逾時');},10000);
+  function cleanup(){try{delete window[cb];}catch(e){}try{document.head.removeChild(tag);}catch(e){}}
+
+  window[cb]=function(data){
+    if(loaded)return;loaded=true;clearTimeout(timeout);cleanup();
+    if(!data||data.error){showError(data&&data.error?data.error:'讀取資料失敗');return;}
+
+    const rawQs=Array.isArray(data.questions)?data.questions:[];
+
+    // 轉換題目
+    let allQs=rawQs
+      .filter(function(q){return HIDDEN_IDS.indexOf(q.id)===-1;})
+      .map(function(q){
+        // 抽菸題強制移到「關於我」
+        const sec=MOVE_TO_MINE.indexOf(q.id)!==-1?'關於我':flipSection(q.section||'關於我');
+        return Object.assign({},q,{
+          label:LABEL_MAP[q.id]||q.id,
+          section:sec,
+          type:'multi',
+          maxSelect:99
+        });
+      });
+
+    // 在「關於你喜歡的女生」最前面插入年齡區間題
+    allQs.unshift(AGE_RANGE_Q);
+
+    // 排序：喜歡的女生 → 關於我
+    const sectionOrder={'關於你喜歡的女生':1,'關於我':2};
+    // 保持各 section 內部原有順序，只做 section 級排序
+    const girlQs=allQs.filter(function(q){return q.section==='關於你喜歡的女生';});
+    const mineQs=allQs.filter(function(q){return q.section==='關於我';});
+    QS=girlQs.concat(mineQs);
+
+    if(!QS.length){showError('題目載入異常');return;}
+    render();
+  };
+
+  tag.onerror=function(){if(loaded)return;loaded=true;clearTimeout(timeout);cleanup();showError('無法連到 Apps Script');};
+  tag.src=SCRIPT_URL+'?callback='+cb+'&t='+Date.now();
+  document.head.appendChild(tag);
+}
+
+function render(){
+  if(!started&&!done){renderIntro();return;}
+  if(pendingSectionIntro){renderSectionIntro(pendingSectionIntro);return;}
+  if(done){renderResult();return;}
+  renderQ();
+}
+
+function renderIntro(){
+  app.innerHTML=
+    '<div class="intro">'+
+      '<div class="intro-title">開始前先看看題目分段 ✨</div>'+
+      '<div class="intro-grid">'+
+        '<div class="intro-card"><div class="k">關於你喜歡的女生</div><div class="d">前半段了解你對理想對象的條件與偏好。</div></div>'+
+        '<div class="intro-card"><div class="k">關於我</div><div class="d">後半段了解你自己的特質與生活習慣。</div></div>'+
+      '</div>'+
+      '<button class="btn bnext start-cta" id="startBtn" style="width:100%">開始作答</button>'+
+    '</div>';
+  document.getElementById('startBtn').onclick=function(){started=true;render();};
+}
+
+function renderSectionIntro(section){
+  const msg=section==='關於我'?'接下來了解你自己的特質與生活習慣。':'接下來了解你對理想對象的偏好與條件。';
+  app.innerHTML=
+    '<div class="intro">'+
+      '<div class="intro-title">下一段：'+esc(section)+'</div>'+
+      '<div class="intro-card"><div class="d">'+esc(msg)+'</div></div>'+
+      '<button class="btn bnext start-cta" id="sectionBtn" style="width:100%;margin-top:.85rem">繼續作答</button>'+
+    '</div>';
+  document.getElementById('sectionBtn').onclick=function(){pendingSectionIntro='';render();};
+}
+
+function renderQ(){
+  const q=QS[qi];
+  const pct=Math.round((qi/QS.length)*100);
+  const isLast=qi===QS.length-1;
+  const section=q.section||'關於你喜歡的女生';
+
+  // 判斷是否已有答案
+  let hasAns=false;
+  if(q.type==='ageRange'){
+    hasAns=!!(ans['__ageMin__']&&ans['__ageMax__']&&
+              Number(ans['__ageMin__'])>=18&&Number(ans['__ageMax__'])<=60&&
+              Number(ans['__ageMin__'])<=Number(ans['__ageMax__']));
+  }else{
+    const val=ans[q.id]||[];
+    hasAns=Array.isArray(val)&&val.length>0;
+  }
+
+  let body='';
+  if(q.type==='ageRange'){
+    const minV=ans['__ageMin__']||'';
+    const maxV=ans['__ageMax__']||'';
+    body=
+      '<div class="age-range">'+
+        '<input class="tinp" type="number" inputmode="numeric" id="ageMin" min="18" max="60" value="'+esc(minV)+'" placeholder="最小 例:23"/>'+
+        '<span>～</span>'+
+        '<input class="tinp" type="number" inputmode="numeric" id="ageMax" min="18" max="60" value="'+esc(maxV)+'" placeholder="最大 例:30"/>'+
+      '</div>'+
+      '<div style="font-size:.72rem;color:var(--muted);text-align:center;margin-top:.5rem;font-weight:600">填入你能接受的女生年齡範圍</div>';
+  }else{
+    const val=ans[q.id]||[];
+    body=
+      '<div class="opts">'+(q.opts||[]).map(function(o,i){
+        const sel=Array.isArray(val)?val.indexOf(o)!==-1:false;
+        return '<button class="opt multi'+(sel?' sel':'')+'" data-i="'+i+'" type="button"><span class="rdot"></span><span>'+esc(o)+'</span></button>';
+      }).join('')+'</div>';
+  }
+
+  app.innerHTML=
+    '<div class="prog">'+
+      '<div class="prog-meta"><span>第 '+(qi+1)+' 題 / 共 '+QS.length+' 題</span><span>💙 填答</span></div>'+
+      '<div class="prog-bar"><div class="prog-fill" style="width:'+pct+'%"></div></div>'+
+    '</div>'+
+    '<div class="qcard">'+
+      '<div class="qsec">✦ '+esc(section)+'</div>'+
+      '<span class="qnum">Q'+String(qi+1).padStart(2,'0')+'</span>'+
+      '<div class="qtxt">'+esc(q.label)+'</div>'+
+      (q.type!=='ageRange'?'<div class="qhint">✓ 可複選多個，盡量以自己能接受的條件都填寫</div>':'')+
+      body+
+    '</div>'+
+    '<div class="nav">'+
+      (qi>0?'<button class="btn bprev" id="btnPrev">← 上一題</button>':'<div></div>')+
+      '<button class="btn bnext" id="btnNext" '+(hasAns?'':'disabled')+'>'+(isLast?'送出填答':'下一題 →')+'</button>'+
+    '</div>';
+
+  const btnPrev=document.getElementById('btnPrev'),btnNext=document.getElementById('btnNext');
+  if(btnPrev)btnPrev.onclick=prev;
+  btnNext.onclick=next;
+
+  if(q.type==='ageRange'){
+    function checkAge(){
+      const mn=parseInt(document.getElementById('ageMin').value,10);
+      const mx=parseInt(document.getElementById('ageMax').value,10);
+      const ok=mn>=18&&mn<=60&&mx>=18&&mx<=60&&mn<=mx;
+      if(!isNaN(mn))ans['__ageMin__']=String(mn);
+      if(!isNaN(mx))ans['__ageMax__']=String(mx);
+      btnNext.disabled=!ok;
+    }
+    document.getElementById('ageMin').addEventListener('input',checkAge);
+    document.getElementById('ageMax').addEventListener('input',checkAge);
+  }else{
+    app.querySelectorAll('.opt').forEach(function(btn){
+      btn.onclick=function(){
+        const idx=Number(btn.getAttribute('data-i'));
+        if(!Array.isArray(ans[q.id]))ans[q.id]=[];
+        const sel=ans[q.id],item=q.opts[idx],pos=sel.indexOf(item);
+        if(pos>=0)sel.splice(pos,1);else sel.push(item);
+        app.querySelectorAll('.opt').forEach(function(el,j){el.classList.toggle('sel',sel.indexOf(q.opts[j])!==-1);});
+        btnNext.disabled=sel.length===0;
+      };
+    });
+  }
+}
+
+function prev(){if(qi<=0)return;qi-=1;render();}
+
+function next(){
+  const q=QS[qi];
+  if(q.type==='ageRange'){
+    const mn=parseInt(ans['__ageMin__'],10),mx=parseInt(ans['__ageMax__'],10);
+    if(!(mn>=18&&mn<=60&&mx>=18&&mx<=60&&mn<=mx)){alert('請輸入有效的年齡區間（18-60，最小≤最大）');return;}
+  }else{
+    const v=ans[q.id];
+    if(!Array.isArray(v)||v.length===0)return;
+  }
+  if(qi<QS.length-1){
+    qi+=1;
+    const prevSec=(QS[qi-1]&&QS[qi-1].section)||'',nextSec=(QS[qi]&&QS[qi].section)||'';
+    if(prevSec&&nextSec&&prevSec!==nextSec)pendingSectionIntro=nextSec;
+    render();return;
+  }
+  done=true;renderResult();saveBoy();
+}
+
+function renderResult(){
+  app.innerHTML=
+    '<div class="rcard">'+
+      '<div class="rbadge">✦ 填答完成 ✦</div>'+
+      '<div style="font-size:2.8rem;margin:.6rem 0">💙</div>'+
+      '<div style="font-size:1.1rem;font-weight:800;color:var(--accent);margin-bottom:.6rem">感謝你的填答！</div>'+
+      '<div style="font-size:.88rem;color:var(--muted);line-height:1.8;margin-bottom:1.2rem">你的資料已成功送出 🎉<br>企鵝哥哥會幫你找到合適的女生 💙<br>想知道配對結果？私訊企鵝哥哥查詢！</div>'+
+      '<div class="rprivate">🐧 私訊企鵝哥哥查詢配對</div>'+
+    '</div>'+
+    '<button class="brst" onclick="restart()">再填一次</button>'+
+    '<div class="saving" id="sm"></div>';
+}
+
+function restart(){
+  qi=0;done=false;started=false;pendingSectionIntro='';
+  Object.keys(ans).forEach(function(k){delete ans[k];});
+  window.scrollTo(0,0);render();
+}
+
+function saveBoy(){
+  const ageMin=ans['__ageMin__']||'';
+  const ageMax=ans['__ageMax__']||'';
+  // 組合成 "25-30" 格式寫入年齡欄
+  const ageRange=ageMin&&ageMax?ageMin+'-'+ageMax:'';
+
+  // 清理 ans，把 __ageMin__ / __ageMax__ 移除，統一放到 '我的年齡'
+  const cleanAns=Object.assign({},ans);
+  delete cleanAns['__ageMin__'];
+  delete cleanAns['__ageMax__'];
+  cleanAns['我的年齡']=ageRange;
+  cleanAns['我的小名']='';
+
+  const payload=JSON.stringify({
+    type:'boy',
+    timestamp:new Date().toISOString(),
+    name:'',
+    age:ageRange,
+    answers:cleanAns,
+    questions:QS
+  });
+
+  const sm=document.getElementById('sm');
+  const ok=function(){if(sm){sm.textContent='✓ 已儲存';sm.className='saving ok';}};
+  const err=function(){if(sm){sm.textContent='⚠ 儲存失敗';sm.className='saving err';}};
+  if(navigator.sendBeacon){const s=navigator.sendBeacon(SCRIPT_URL,new Blob([payload],{type:'text/plain'}));s?ok():err();return;}
+  fetch(SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},body:payload}).then(ok).catch(err);
+}
+
+boot();
+</script>
+</body>
+</html>
