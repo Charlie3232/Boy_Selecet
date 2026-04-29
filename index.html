@@ -96,7 +96,7 @@ body{font-family:'Nunito','Noto Sans TC',sans-serif;background:var(--bg);color:v
   <div id="app"></div>
 </div>
 <script>
-const SCRIPT_URL='https://script.google.com/macros/s/AKfycbxivXaOPoFItLGHqqlCQdtDRuiCIVRKO2RPhI6ndur8PG1hoOIEILPV3Dk7q4QDUlXCzA/exec';
+const SCRIPT_URL='https://script.google.com/macros/s/AKfycbx78PvtXHNZ36n7Y3jCx7wpsR6iTHwCFWfT4_nnmV0kv35T9ZvRSSTx29hNBRmqJAj_tg/exec';
 
 // 題目 label 轉換（女生視角 → 男生視角）
 const LABEL_MAP={
@@ -351,7 +351,7 @@ function next(){
     if(prevSec&&nextSec&&prevSec!==nextSec)pendingSectionIntro=nextSec;
     render();return;
   }
-  done=true;renderResult();saveBoy();
+  done=true;saveBoyThenRender();
 }
 
 function renderResult(){
@@ -373,13 +373,17 @@ function restart(){
   window.scrollTo(0,0);render();
 }
 
-function saveBoy(){
+function saveBoyThenRender(){
+  // 先顯示儲存中畫面，避免 Safari 中斷資料
+  app.innerHTML=
+    '<div class="loading" style="padding:5rem 1rem;">'+
+      '<div class="spin"></div>'+
+      '<p style="margin-top:.5rem">資料儲存中，請稍候…</p>'+
+    '</div>';
+
   const ageMin=ans['__ageMin__']||'';
   const ageMax=ans['__ageMax__']||'';
-  // 組合成 "25-30" 格式寫入年齡欄
   const ageRange=ageMin&&ageMax?ageMin+'-'+ageMax:'';
-
-  // 清理 ans，把 __ageMin__ / __ageMax__ 移除，統一放到 '我的年齡'
   const cleanAns=Object.assign({},ans);
   delete cleanAns['__ageMin__'];
   delete cleanAns['__ageMax__'];
@@ -395,11 +399,24 @@ function saveBoy(){
     questions:QS
   });
 
-  const sm=document.getElementById('sm');
-  const ok=function(){if(sm){sm.textContent='✓ 已儲存';sm.className='saving ok';}};
-  const err=function(){if(sm){sm.textContent='⚠ 儲存失敗';sm.className='saving err';}};
-  if(navigator.sendBeacon){const s=navigator.sendBeacon(SCRIPT_URL,new Blob([payload],{type:'text/plain'}));s?ok():err();return;}
-  fetch(SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},body:payload}).then(ok).catch(err);
+  // 等 fetch 完成再顯示結果頁，防止 Safari 中途中斷
+  fetch(SCRIPT_URL,{
+    method:'POST',
+    mode:'no-cors',
+    headers:{'Content-Type':'text/plain'},
+    body:payload
+  })
+  .then(function(){
+    renderResult();
+    const sm=document.getElementById('sm');
+    if(sm){sm.textContent='✓ 已儲存';sm.className='saving ok';}
+  })
+  .catch(function(){
+    // 失敗也顯示結果，但提示截圖
+    renderResult();
+    const sm=document.getElementById('sm');
+    if(sm){sm.textContent='⚠ 儲存失敗，請截圖通知企鵝哥哥';sm.className='saving err';}
+  });
 }
 
 boot();
