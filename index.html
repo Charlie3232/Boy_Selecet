@@ -96,9 +96,9 @@ body{font-family:'Nunito','Noto Sans TC',sans-serif;background:var(--bg);color:v
   <div id="app"></div>
 </div>
 <script>
-const SCRIPT_URL='https://script.google.com/macros/s/AKfycbx3uzrU2blWwwJiTuW-8N9gQmZrWgT8oR4R52wKDV4kJ2esUBF-6AsGDA6Lpx6zqVB_qw/exec';
+// 請替換為您最新部署的 Apps Script 網址
+const SCRIPT_URL='https://script.google.com/macros/s/AKfycbwHjm-5FUk5fWwTLlxbDy78weYSmIVPmiou4W_l-XdizniaIT2R1mD9IiKCUMl_RTsmDg/exec';
 
-// 題目 label 轉換（女生視角 → 男生視角）
 const LABEL_MAP={
   '我的職業類別':             '女生職業？',
   '出門狀態':                 '你希望女生出門化妝的習慣？',
@@ -120,7 +120,6 @@ const LABEL_MAP={
   '你希望男生的休假頻率':     '你的休假頻率？',
   '你能希望男生的喝酒習慣':   '你的喝酒習慣？',
   '你希望男生跟你假日怎麼過': '你希望情侶假日怎麼過？',
-  '你希望男生的飲食觀':       '你的飲食習慣？',
   '你希望男生的飲食習慣':     '你的飲食習慣？',
   '你希望的男生的交友觀':     '你的交友圈狀況？',
   '你希望的男生經濟狀況':     '你目前的經濟狀況？',
@@ -130,17 +129,15 @@ const LABEL_MAP={
   '你希望男生如何發展未來意願':'你對這段感情的期待發展？',
 };
 
-// 不顯示的題目
 const HIDDEN_IDS=['我的小名','我的年齡'];
+const MOVE_TO_MINE=['是否會在意男生抽菸'];
 
-// section 對調
 function flipSection(sec){
   if(sec==='關於我')return '關於你喜歡的女生';
   if(sec==='關於你喜歡的男生')return '關於我';
   return sec;
 }
 
-// 「關於你喜歡的女生」段最前面要插入的年齡區間題
 const AGE_RANGE_Q={
   id:'__ageRange__',
   label:'你希望女生的年齡區間？',
@@ -150,15 +147,12 @@ const AGE_RANGE_Q={
   opts:[]
 };
 
-// 「關於我」段要插入的抽菸題（來自 LABEL_MAP 轉換後是「你會抽菸嗎？」）
-// 這題本來在「關於你喜歡的女生」，我們在 flipSection 後把它移到「關於我」
-const MOVE_TO_MINE=['是否會在意男生抽菸'];
-
 let QS=[],qi=0;
 const ans={};
 let done=false,started=false,pendingSectionIntro='';
 const app=document.getElementById('app');
 
+// 背景動畫
 (function(){
   const bg=document.getElementById('bbg');if(!bg)return;
   const colors=['rgba(74,132,184,0.18)','rgba(170,204,236,0.22)','rgba(140,170,200,0.16)','rgba(216,234,248,0.32)'];
@@ -176,48 +170,32 @@ function showError(msg){app.innerHTML='<div class="err-card"><p>😟 '+esc(msg)+
 
 function boot(){
   showLoading();
-  const cb='_boyquiz_'+Date.now(),tag=document.createElement('script');
-  let loaded=false;
-  const timeout=setTimeout(function(){if(loaded)return;loaded=true;cleanup();showError('載入逾時');},10000);
-  function cleanup(){try{delete window[cb];}catch(e){}try{document.head.removeChild(tag);}catch(e){}}
-
-  window[cb]=function(data){
-    if(loaded)return;loaded=true;clearTimeout(timeout);cleanup();
-    if(!data||data.error){showError(data&&data.error?data.error:'讀取資料失敗');return;}
-
-    const rawQs=Array.isArray(data.questions)?data.questions:[];
-
-    // 轉換題目
-    let allQs=rawQs
-      .filter(function(q){return HIDDEN_IDS.indexOf(q.id)===-1;})
-      .map(function(q){
-        // 抽菸題強制移到「關於我」
-        const sec=MOVE_TO_MINE.indexOf(q.id)!==-1?'關於我':flipSection(q.section||'關於我');
-        return Object.assign({},q,{
-          label:LABEL_MAP[q.id]||q.id,
-          section:sec,
-          type:'multi',
-          maxSelect:99
+  fetch(SCRIPT_URL+'?t='+Date.now())
+    .then(r=>r.json())
+    .then(data=>{
+      if(!data||data.error){showError(data?data.error:'讀取失敗');return;}
+      const rawQs=data.questions||[];
+      
+      let allQs=rawQs
+        .filter(q=>HIDDEN_IDS.indexOf(q.id)===-1)
+        .map(q=>{
+          const sec=MOVE_TO_MINE.indexOf(q.id)!==-1?'關於我':flipSection(q.section||'關於我');
+          return Object.assign({},q,{
+            label:LABEL_MAP[q.id]||q.id,
+            section:sec,
+            type:'multi'
+          });
         });
-      });
 
-    // 在「關於你喜歡的女生」最前面插入年齡區間題
-    allQs.unshift(AGE_RANGE_Q);
-
-    // 排序：喜歡的女生 → 關於我
-    const sectionOrder={'關於你喜歡的女生':1,'關於我':2};
-    // 保持各 section 內部原有順序，只做 section 級排序
-    const girlQs=allQs.filter(function(q){return q.section==='關於你喜歡的女生';});
-    const mineQs=allQs.filter(function(q){return q.section==='關於我';});
-    QS=girlQs.concat(mineQs);
-
-    if(!QS.length){showError('題目載入異常');return;}
-    render();
-  };
-
-  tag.onerror=function(){if(loaded)return;loaded=true;clearTimeout(timeout);cleanup();showError('無法連到 Apps Script');};
-  tag.src=SCRIPT_URL+'?callback='+cb+'&t='+Date.now();
-  document.head.appendChild(tag);
+      allQs.unshift(AGE_RANGE_Q);
+      
+      const girlQs=allQs.filter(q=>q.section==='關於你喜歡的女生');
+      const mineQs=allQs.filter(q=>q.section==='關於我');
+      QS=girlQs.concat(mineQs);
+      
+      render();
+    })
+    .catch(e=>showError('連線失敗：'+e.message));
 }
 
 function render(){
@@ -237,7 +215,7 @@ function renderIntro(){
       '</div>'+
       '<button class="btn bnext start-cta" id="startBtn" style="width:100%">開始作答</button>'+
     '</div>';
-  document.getElementById('startBtn').onclick=function(){started=true;render();};
+  document.getElementById('startBtn').onclick=()=> {started=true;render();};
 }
 
 function renderSectionIntro(section){
@@ -248,110 +226,104 @@ function renderSectionIntro(section){
       '<div class="intro-card"><div class="d">'+esc(msg)+'</div></div>'+
       '<button class="btn bnext start-cta" id="sectionBtn" style="width:100%;margin-top:.85rem">繼續作答</button>'+
     '</div>';
-  document.getElementById('sectionBtn').onclick=function(){pendingSectionIntro='';render();};
+  document.getElementById('sectionBtn').onclick=()=>{pendingSectionIntro='';render();};
 }
 
 function renderQ(){
   const q=QS[qi];
   const pct=Math.round((qi/QS.length)*100);
   const isLast=qi===QS.length-1;
-  const section=q.section||'關於你喜歡的女生';
-
-  // 判斷是否已有答案
+  
   let hasAns=false;
   if(q.type==='ageRange'){
-    hasAns=!!(ans['__ageMin__']&&ans['__ageMax__']&&
-              Number(ans['__ageMin__'])>=18&&Number(ans['__ageMax__'])<=60&&
-              Number(ans['__ageMin__'])<=Number(ans['__ageMax__']));
+    const mn=parseInt(ans['__ageMin__'],10),mx=parseInt(ans['__ageMax__'],10);
+    hasAns=mn>=18 && mx>=18 && mn<=mx;
   }else{
-    const val=ans[q.id]||[];
-    hasAns=Array.isArray(val)&&val.length>0;
+    hasAns=(ans[q.id]||[]).length>0;
   }
 
   let body='';
   if(q.type==='ageRange'){
-    const minV=ans['__ageMin__']||'';
-    const maxV=ans['__ageMax__']||'';
-    body=
-      '<div class="age-range">'+
-        '<input class="tinp" type="number" inputmode="numeric" id="ageMin" min="18" max="60" value="'+esc(minV)+'" placeholder="最小 例:23"/>'+
-        '<span>～</span>'+
-        '<input class="tinp" type="number" inputmode="numeric" id="ageMax" min="18" max="60" value="'+esc(maxV)+'" placeholder="最大 例:30"/>'+
-      '</div>'+
-      '<div style="font-size:.72rem;color:var(--muted);text-align:center;margin-top:.5rem;font-weight:600">填入你能接受的女生年齡範圍</div>';
+    body=`<div class="age-range">
+      <input class="tinp" type="number" id="ageMin" value="${ans['__ageMin__']||''}" placeholder="最小"/>
+      <span>～</span>
+      <input class="tinp" type="number" id="ageMax" value="${ans['__ageMax__']||''}" placeholder="最大"/>
+    </div>`;
   }else{
-    const val=ans[q.id]||[];
-    body=
-      '<div class="opts">'+(q.opts||[]).map(function(o,i){
-        const sel=Array.isArray(val)?val.indexOf(o)!==-1:false;
-        return '<button class="opt multi'+(sel?' sel':'')+'" data-i="'+i+'" type="button"><span class="rdot"></span><span>'+esc(o)+'</span></button>';
-      }).join('')+'</div>';
+    const sel=ans[q.id]||[];
+    body='<div class="opts">'+(q.opts||[]).map((o,i)=>{
+      const isSel=sel.indexOf(o)!==-1;
+      return `<button class="opt ${isSel?'sel':''}" onclick="toggleOpt('${q.id}','${o}')"><span class="rdot"></span><span>${esc(o)}</span></button>`;
+    }).join('')+'</div>';
   }
 
-  app.innerHTML=
-    '<div class="prog">'+
-      '<div class="prog-meta"><span>第 '+(qi+1)+' 題 / 共 '+QS.length+' 題</span><span>💙 填答</span></div>'+
-      '<div class="prog-bar"><div class="prog-fill" style="width:'+pct+'%"></div></div>'+
-    '</div>'+
-    '<div class="qcard">'+
-      '<div class="qsec">✦ '+esc(section)+'</div>'+
-      '<span class="qnum">Q'+String(qi+1).padStart(2,'0')+'</span>'+
-      '<div class="qtxt">'+esc(q.label)+'</div>'+
-      (q.type!=='ageRange'?'<div class="qhint">✓ 可複選多個，盡量以自己能接受的條件都填寫</div>':'')+
-      body+
-    '</div>'+
-    '<div class="nav">'+
-      (qi>0?'<button class="btn bprev" id="btnPrev">← 上一題</button>':'<div></div>')+
-      '<button class="btn bnext" id="btnNext" '+(hasAns?'':'disabled')+'>'+(isLast?'送出填答':'下一題 →')+'</button>'+
-    '</div>';
-
-  const btnPrev=document.getElementById('btnPrev'),btnNext=document.getElementById('btnNext');
-  if(btnPrev)btnPrev.onclick=prev;
-  btnNext.onclick=next;
+  app.innerHTML=`
+    <div class="prog">
+      <div class="prog-meta"><span>第 ${qi+1} 題 / 共 ${QS.length} 題</span><span>💙 填答</span></div>
+      <div class="prog-bar"><div class="prog-fill" style="width:${pct}%"></div></div>
+    </div>
+    <div class="qcard">
+      <div class="qsec">✦ ${esc(q.section)}</div>
+      <span class="qnum">Q${String(qi+1).padStart(2,'0')}</span>
+      <div class="qtxt">${esc(q.label)}</div>
+      ${q.type!=='ageRange'?'<div class="qhint">✓ 可複選多個，盡量以自己能接受的條件都填寫</div>':''}
+      ${body}
+    </div>
+    <div class="nav">
+      ${qi>0?'<button class="btn bprev" onclick="saveAge();qi--;render()">← 上一題</button>':'<div></div>'}
+      <button class="btn bnext" id="btnNext" ${hasAns?'':'disabled'} onclick="next()">${isLast?'送出填答':'下一題 →'}</button>
+    </div>`;
 
   if(q.type==='ageRange'){
-    function checkAge(){
-      const mn=parseInt(document.getElementById('ageMin').value,10);
-      const mx=parseInt(document.getElementById('ageMax').value,10);
-      const ok=mn>=18&&mn<=60&&mx>=18&&mx<=60&&mn<=mx;
-      if(!isNaN(mn))ans['__ageMin__']=String(mn);
-      if(!isNaN(mx))ans['__ageMax__']=String(mx);
-      btnNext.disabled=!ok;
-    }
-    document.getElementById('ageMin').addEventListener('input',checkAge);
-    document.getElementById('ageMax').addEventListener('input',checkAge);
-  }else{
-    app.querySelectorAll('.opt').forEach(function(btn){
-      btn.onclick=function(){
-        const idx=Number(btn.getAttribute('data-i'));
-        if(!Array.isArray(ans[q.id]))ans[q.id]=[];
-        const sel=ans[q.id],item=q.opts[idx],pos=sel.indexOf(item);
-        if(pos>=0)sel.splice(pos,1);else sel.push(item);
-        app.querySelectorAll('.opt').forEach(function(el,j){el.classList.toggle('sel',sel.indexOf(q.opts[j])!==-1);});
-        btnNext.disabled=sel.length===0;
-      };
-    });
+    const check=()=>{
+      saveAge();
+      const mn=parseInt(ans['__ageMin__'],10),mx=parseInt(ans['__ageMax__'],10);
+      document.getElementById('btnNext').disabled=!(mn>=18 && mx>=18 && mn<=mx);
+    };
+    document.getElementById('ageMin').oninput=check;
+    document.getElementById('ageMax').oninput=check;
   }
 }
 
-function prev(){if(qi<=0)return;qi-=1;render();}
+function saveAge(){
+  const mn=document.getElementById('ageMin'),mx=document.getElementById('ageMax');
+  if(mn)ans['__ageMin__']=mn.value;if(mx)ans['__ageMax__']=mx.value;
+}
+
+function toggleOpt(qid,opt){
+  if(!ans[qid])ans[qid]=[];
+  const i=ans[qid].indexOf(opt);
+  if(i>-1)ans[qid].splice(i,1);else ans[qid].push(opt);
+  render();
+}
 
 function next(){
   const q=QS[qi];
-  if(q.type==='ageRange'){
-    const mn=parseInt(ans['__ageMin__'],10),mx=parseInt(ans['__ageMax__'],10);
-    if(!(mn>=18&&mn<=60&&mx>=18&&mx<=60&&mn<=mx)){alert('請輸入有效的年齡區間（18-60，最小≤最大）');return;}
-  }else{
-    const v=ans[q.id];
-    if(!Array.isArray(v)||v.length===0)return;
-  }
+  if(q.type==='ageRange')saveAge();
+  
   if(qi<QS.length-1){
-    qi+=1;
-    const prevSec=(QS[qi-1]&&QS[qi-1].section)||'',nextSec=(QS[qi]&&QS[qi].section)||'';
-    if(prevSec&&nextSec&&prevSec!==nextSec)pendingSectionIntro=nextSec;
-    render();return;
+    qi++;
+    if(QS[qi-1].section!==QS[qi].section)pendingSectionIntro=QS[qi].section;
+    render();
+  }else{
+    done=true;saveData();
   }
-  done=true;saveBoyThenRender();
+}
+
+function saveData(){
+  app.innerHTML='<div class="loading"><div class="spin"></div><p>資料儲存中...</p></div>';
+  const age=ans['__ageMin__']+'-'+ans['__ageMax__'];
+  
+  const ordered=[];
+  QS.forEach(q=>{
+    if(q.id!=='__ageRange__') ordered.push(ans[q.id]||[]);
+  });
+
+  fetch(SCRIPT_URL,{
+    method:'POST',
+    mode:'no-cors',
+    body:JSON.stringify({type:'boy',age:age,answerList:ordered})
+  }).then(()=>renderResult());
 }
 
 function renderResult(){
@@ -360,63 +332,10 @@ function renderResult(){
       '<div class="rbadge">✦ 填答完成 ✦</div>'+
       '<div style="font-size:2.8rem;margin:.6rem 0">💙</div>'+
       '<div style="font-size:1.1rem;font-weight:800;color:var(--accent);margin-bottom:.6rem">感謝你的填答！</div>'+
-      '<div style="font-size:.88rem;color:var(--muted);line-height:1.8;margin-bottom:1.2rem">你的資料已成功送出 🎉<br>企鵝哥哥會幫你找到合適的女生 💙<br>想知道配對結果？私訊企鵝哥哥查詢！</div>'+
+      '<div style="font-size:.88rem;color:var(--muted);line-height:1.8;margin-bottom:1.2rem">你的資料已成功送出 🎉<br>企鵝哥哥會幫你找到合適的女生 💙</div>'+
       '<div class="rprivate">🐧 私訊企鵝哥哥查詢配對</div>'+
     '</div>'+
-    '<button class="brst" onclick="restart()">再填一次</button>'+
-    '<div class="saving" id="sm"></div>';
-}
-
-function restart(){
-  qi=0;done=false;started=false;pendingSectionIntro='';
-  Object.keys(ans).forEach(function(k){delete ans[k];});
-  window.scrollTo(0,0);render();
-}
-
-function saveBoyThenRender(){
-  // 先顯示儲存中畫面，避免 Safari 中斷資料
-  app.innerHTML=
-    '<div class="loading" style="padding:5rem 1rem;">'+
-      '<div class="spin"></div>'+
-      '<p style="margin-top:.5rem">資料儲存中，請稍候…</p>'+
-    '</div>';
-
-  const ageMin=ans['__ageMin__']||'';
-  const ageMax=ans['__ageMax__']||'';
-  const ageRange=ageMin&&ageMax?ageMin+'-'+ageMax:'';
-  const cleanAns=Object.assign({},ans);
-  delete cleanAns['__ageMin__'];
-  delete cleanAns['__ageMax__'];
-  cleanAns['我的年齡']=ageRange;
-  cleanAns['我的小名']='';
-
-  const payload=JSON.stringify({
-    type:'boy',
-    timestamp:new Date().toISOString(),
-    name:'',
-    age:ageRange,
-    answers:cleanAns,
-    questions:QS
-  });
-
-  // 等 fetch 完成再顯示結果頁，防止 Safari 中途中斷
-  fetch(SCRIPT_URL,{
-    method:'POST',
-    mode:'no-cors',
-    headers:{'Content-Type':'text/plain'},
-    body:payload
-  })
-  .then(function(){
-    renderResult();
-    const sm=document.getElementById('sm');
-    if(sm){sm.textContent='✓ 已儲存';sm.className='saving ok';}
-  })
-  .catch(function(){
-    // 失敗也顯示結果，但提示截圖
-    renderResult();
-    const sm=document.getElementById('sm');
-    if(sm){sm.textContent='⚠ 儲存失敗，請截圖通知企鵝哥哥';sm.className='saving err';}
-  });
+    '<button class="brst" onclick="location.reload()">再填一次</button>';
 }
 
 boot();
