@@ -8,11 +8,11 @@
 <style>
 :root{--bg:#eef4fd;--card:#f8fbff;--blue:#7aaed4;--blue2:#aaccec;--blue3:#d8eaf8;--accent:#4a84b8;--accent2:#2d6090;--muted:#5a7a90;--text:#253545;--green:#7ab870;--shadow:rgba(74,132,184,0.15);}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
-body{font-family:'Nunito','Noto Sans TC',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;}
+body{font-family:"Nunito","Noto Sans TC",sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;}
 .bbg{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden;}
 .fb{position:absolute;border-radius:50%;animation:floatUp linear infinite;opacity:0;}
 @keyframes floatUp{0%{transform:translateY(0) translateX(0) scale(1);opacity:0;}10%{opacity:.45;}50%{transform:translateY(-45vh) translateX(var(--drift)) scale(1.05);}90%{opacity:.18;}100%{transform:translateY(-100vh) translateX(var(--drift)) scale(.7);opacity:0;}}
-.wrap{position:relative;z-index:1;max-width:480px;margin:0 auto;padding:1.5rem 1rem 5rem;}
+.wrap{position:relative;z-index:1;max-width:480px;margin:0 auto;padding:1.5rem 1rem 4rem;}
 .header{text-align:center;margin-bottom:1.4rem;}
 .pingu-wrap{position:relative;width:100px;height:100px;margin:0 auto .8rem;}
 .pingu-svg{width:100px;height:100px;animation:wobble 3s ease-in-out infinite;filter:drop-shadow(0 6px 14px rgba(74,132,184,.4));}
@@ -47,12 +47,12 @@ body{font-family:'Nunito','Noto Sans TC',sans-serif;background:var(--bg);color:v
 .opt.sel{border-color:var(--accent);background:linear-gradient(135deg,#eef6ff,#dceaf8);color:var(--text);}
 .rdot{width:18px;height:18px;flex-shrink:0;border-radius:6px;border:2.5px solid var(--blue2);margin-top:2px;display:flex;align-items:center;justify-content:center;}
 .opt.sel .rdot{border-color:var(--accent);background:var(--accent);}
-.opt.sel .rdot::after{content:'✓';font-size:11px;font-weight:800;color:white;}
+.opt.sel .rdot::after{content:"✓";font-size:11px;font-weight:800;color:white;}
 .age-range{display:grid;grid-template-columns:1fr auto 1fr;gap:.5rem;align-items:center;}
 .age-range span{text-align:center;font-weight:800;color:var(--muted);font-size:.9rem;}
 .tinp{width:100%;padding:.85rem 1rem;border:2px solid var(--blue3);border-radius:14px;background:var(--bg);font-size:1rem;font-weight:700;color:var(--text);outline:none;transition:border-color .15s;text-align:center;}
 .tinp:focus{border-color:var(--accent);background:var(--card);}
-.nav{display:flex;gap:.65rem;}
+.nav{display:flex;gap:.65rem;margin-top:.8rem;}
 .btn{flex:1;padding:.85rem;border-radius:14px;border:none;font-size:.95rem;font-weight:800;cursor:pointer;touch-action:manipulation;}
 .bprev{background:var(--card);border:2px solid var(--blue3);color:var(--muted);}
 .bnext{background:linear-gradient(135deg,var(--accent),var(--accent2));color:white;box-shadow:0 4px 16px rgba(74,132,184,.4);}
@@ -60,13 +60,18 @@ body{font-family:'Nunito','Noto Sans TC',sans-serif;background:var(--bg);color:v
 .start-cta{animation:ctaPulse 1.9s ease-in-out infinite;}
 @keyframes ctaPulse{0%,100%{transform:translateY(0) scale(1);}45%{transform:translateY(-2px) scale(1.02);}70%{transform:translateY(0) scale(1);}}
 .rcard{background:var(--card);border:3px solid var(--accent);border-radius:24px;padding:2rem 1.5rem;text-align:center;box-shadow:0 12px 40px rgba(74,132,184,.3),0 0 0 6px rgba(184,208,232,.35);position:relative;overflow:hidden;animation:resultPop .9s ease both;}
-.rcard::before{content:'';position:absolute;top:0;left:0;right:0;height:6px;background:linear-gradient(90deg,var(--blue2),var(--accent),var(--blue));}
+.rcard::before{content:"";position:absolute;top:0;left:0;right:0;height:6px;background:linear-gradient(90deg,var(--blue2),var(--accent),var(--blue));}
 @keyframes resultPop{from{transform:scale(.92);opacity:.2}to{transform:scale(1);opacity:1}}
 .rbadge{font-size:.68rem;font-weight:800;letter-spacing:.14em;color:var(--accent);text-transform:uppercase;margin-bottom:.6rem;}
 .rprivate{display:inline-flex;align-items:center;gap:.4rem;background:var(--blue3);color:var(--accent);font-size:.82rem;font-weight:700;padding:.5rem 1.2rem;border-radius:99px;margin-top:.5rem;}
 .brst{width:100%;padding:.9rem;border-radius:14px;border:2px solid var(--accent);background:transparent;color:var(--accent);font-size:.95rem;font-weight:800;cursor:pointer;margin-top:1rem;}
-.saving{text-align:center;font-size:.76rem;font-weight:700;color:var(--muted);margin-top:.6rem;min-height:1.1rem;}
-.saving.ok{color:var(--green);}.saving.err{color:#c07070;}
+.photo-upload{border:2.5px dashed var(--blue2);border-radius:18px;padding:1.5rem;text-align:center;cursor:pointer;background:var(--bg);transition:border-color .15s;margin-bottom:.8rem;}
+.photo-upload:hover{border-color:var(--accent);}
+.photo-preview{width:100%;max-height:240px;object-fit:cover;border-radius:14px;margin-top:.8rem;display:none;}
+.intro-area{width:100%;padding:.85rem 1rem;border:2px solid var(--blue3);border-radius:14px;background:var(--bg);font-size:.92rem;font-weight:600;color:var(--text);outline:none;resize:none;font-family:inherit;line-height:1.6;transition:border-color .15s;}
+.intro-area:focus{border-color:var(--accent);background:var(--card);}
+.profile-label{font-size:.8rem;font-weight:800;color:var(--accent);margin-bottom:.5rem;margin-top:.9rem;display:block;}
+.profile-label:first-child{margin-top:0;}
 </style>
 </head>
 <body>
@@ -96,37 +101,20 @@ body{font-family:'Nunito','Noto Sans TC',sans-serif;background:var(--bg);color:v
   <div id="app"></div>
 </div>
 <script>
-// 請替換為您最新部署的 Apps Script 網址
-const SCRIPT_URL='https://script.google.com/macros/s/AKfycbwHjm-5FUk5fWwTLlxbDy78weYSmIVPmiou4W_l-XdizniaIT2R1mD9IiKCUMl_RTsmDg/exec';
+const SCRIPT_URL='https://script.google.com/macros/s/AKfycbwHtHJP-H4UHe2LqjntcR9B6xpU1PCwo9ezsgTaINFAOwd92LJ91DsdemsvFDcGsSJggA/exec';
 
 const LABEL_MAP={
-  '我的職業類別':             '女生職業？',
-  '出門狀態':                 '你希望女生出門化妝的習慣？',
-  '外貌':                     '你希望女生的膚色？',
-  '皮膚狀態':                 '你希望女生的皮膚狀態？',
-  '性格':                     '你希望女生的個性偏向？',
-  '體毛管理':                 '你希望女生的體毛管理習慣？',
-  '氣味管理':                 '你希望女生對氣味的管理？',
-  '情侶相處關係_1':           '你對節日儀式感的態度？',
-  '情侶相處關係_2':           '女生遇到感情衝突時的方式？',
-  '網路現實觀':               '女生的社群使用習慣？',
-  '對未來的想法':             '女生對未來婚育的想法？',
-  '指甲習慣':                 '你希望女生的指甲習慣？',
-  '家庭關係':                 '你希望女生和家人的關係？',
-  '情侶金錢觀':               '女生對情侶金錢分擔的看法？',
-  '是否會在意男生抽菸':       '你會抽菸嗎？',
-  '你希望男生的身高範圍':     '你的身高範圍？',
-  '你希望男生的作息':         '你的作息習慣？',
-  '你希望男生的休假頻率':     '你的休假頻率？',
-  '你能希望男生的喝酒習慣':   '你的喝酒習慣？',
-  '你希望男生跟你假日怎麼過': '你希望情侶假日怎麼過？',
-  '你希望男生的飲食習慣':     '你的飲食習慣？',
-  '你希望的男生的交友觀':     '你的交友圈狀況？',
-  '你希望的男生經濟狀況':     '你目前的經濟狀況？',
-  '你希望男生的金錢價值觀':   '你的金錢價值觀？',
-  '你希望男生的感情溝通':     '你在感情中的溝通方式？',
-  '你希望男生的性愛觀':       '你對性愛頻率的想法？',
-  '你希望男生如何發展未來意願':'你對這段感情的期待發展？',
+  '我的職業類別':'女生職業？','出門狀態':'你希望女生出門化妝的習慣？','外貌':'你希望女生的膚色？',
+  '皮膚狀態':'你希望女生的皮膚狀態？','性格':'你希望女生的個性偏向？','體毛管理':'你希望女生的體毛管理習慣？',
+  '氣味管理':'你希望女生對氣味的管理？','情侶相處關係_1':'你對節日儀式感的態度？','情侶相處關係_2':'女生遇到感情衝突時的方式？',
+  '網路現實觀':'女生的社群使用習慣？','對未來的想法':'女生對未來婚育的想法？','指甲習慣':'你希望女生的指甲習慣？',
+  '家庭關係':'你希望女生和家人的關係？','情侶金錢觀':'女生對情侶金錢分擔的看法？','是否會在意男生抽菸':'你會抽菸嗎？',
+  '男生居住地區':'你目前居住地區？','你希望男生的身高範圍':'你的身高範圍？','你希望男生的作息':'你的作息習慣？',
+  '你希望男生的休假頻率':'你的休假頻率？','你能希望男生的喝酒習慣':'你的喝酒習慣？',
+  '你希望男生跟你假日怎麼過':'你希望情侶假日怎麼過？','你希望男生的飲食習慣':'你的飲食習慣？',
+  '你希望的男生的交友觀':'你的交友圈狀況？','你希望的男生經濟狀況':'你目前的經濟狀況？',
+  '你希望男生的金錢價值觀':'你的金錢價值觀？','你希望男生的感情溝通':'你在感情中的溝通方式？',
+  '你希望男生的性愛觀':'你對性愛頻率的想法？','你希望男生如何發展未來意願':'你對這段感情的期待發展？',
 };
 
 const HIDDEN_IDS=['我的小名','我的年齡'];
@@ -138,21 +126,16 @@ function flipSection(sec){
   return sec;
 }
 
-const AGE_RANGE_Q={
-  id:'__ageRange__',
-  label:'你希望女生的年齡區間？',
-  section:'關於你喜歡的女生',
-  type:'ageRange',
-  scorable:false,
-  opts:[]
-};
+const NICKNAME_Q={id:'__nickname__',label:'幫自己取一個稱號（5-6字）',section:'關於我',type:'nickname',opts:[],placeholder:'例：韓系小奶狗、陽光靦腆男'};
+const AGE_RANGE_Q={id:'__ageRange__',label:'你希望女生的年齡區間？',section:'關於你喜歡的女生',type:'ageRange',opts:[]};
+const PROFILE_Q={id:'__profile__',label:'上傳照片 & 自我介紹',section:'關於我',type:'profile',opts:[]};
 
 let QS=[],qi=0;
 const ans={};
 let done=false,started=false,pendingSectionIntro='';
+let boyPhotoBase64='',boyPhotoMime='';
 const app=document.getElementById('app');
 
-// 背景動畫
 (function(){
   const bg=document.getElementById('bbg');if(!bg)return;
   const colors=['rgba(74,132,184,0.18)','rgba(170,204,236,0.22)','rgba(140,170,200,0.16)','rgba(216,234,248,0.32)'];
@@ -170,32 +153,28 @@ function showError(msg){app.innerHTML='<div class="err-card"><p>😟 '+esc(msg)+
 
 function boot(){
   showLoading();
-  fetch(SCRIPT_URL+'?t='+Date.now())
-    .then(r=>r.json())
-    .then(data=>{
-      if(!data||data.error){showError(data?data.error:'讀取失敗');return;}
-      const rawQs=data.questions||[];
-      
-      let allQs=rawQs
-        .filter(q=>HIDDEN_IDS.indexOf(q.id)===-1)
-        .map(q=>{
-          const sec=MOVE_TO_MINE.indexOf(q.id)!==-1?'關於我':flipSection(q.section||'關於我');
-          return Object.assign({},q,{
-            label:LABEL_MAP[q.id]||q.id,
-            section:sec,
-            type:'multi'
-          });
-        });
-
-      allQs.unshift(AGE_RANGE_Q);
-      
-      const girlQs=allQs.filter(q=>q.section==='關於你喜歡的女生');
-      const mineQs=allQs.filter(q=>q.section==='關於我');
-      QS=girlQs.concat(mineQs);
-      
-      render();
-    })
-    .catch(e=>showError('連線失敗：'+e.message));
+  const cb='_boy_'+Date.now(),tag=document.createElement('script');
+  let loaded=false;
+  const timeout=setTimeout(function(){if(loaded)return;loaded=true;cleanup();showError('載入逾時');},10000);
+  function cleanup(){try{delete window[cb];}catch(e){}try{document.head.removeChild(tag);}catch(e){}}
+  window[cb]=function(data){
+    if(loaded)return;loaded=true;clearTimeout(timeout);cleanup();
+    if(!data||data.error){showError(data&&data.error?data.error:'讀取資料失敗');return;}
+    const rawQs=data.questions||[];
+    let allQs=rawQs.filter(q=>HIDDEN_IDS.indexOf(q.id)===-1).map(q=>{
+      const sec=MOVE_TO_MINE.indexOf(q.id)!==-1?'關於我':flipSection(q.section||'關於我');
+      return Object.assign({},q,{label:LABEL_MAP[q.id]||q.id,section:sec,type:'multi'});
+    });
+    allQs.unshift(AGE_RANGE_Q);
+    const girlQs=allQs.filter(q=>q.section==='關於你喜歡的女生');
+    const mineQs=allQs.filter(q=>q.section==='關於我');
+    // 稱號第一題，照片介紹最後一題
+    QS=[NICKNAME_Q].concat(girlQs).concat(mineQs).concat([PROFILE_Q]);
+    render();
+  };
+  tag.onerror=function(){if(loaded)return;loaded=true;clearTimeout(timeout);cleanup();showError('無法連到 Apps Script');};
+  tag.src=SCRIPT_URL+'?callback='+cb+'&t='+Date.now();
+  document.head.appendChild(tag);
 }
 
 function render(){
@@ -206,26 +185,13 @@ function render(){
 }
 
 function renderIntro(){
-  app.innerHTML=
-    '<div class="intro">'+
-      '<div class="intro-title">開始前先看看題目分段 ✨</div>'+
-      '<div class="intro-grid">'+
-        '<div class="intro-card"><div class="k">關於你喜歡的女生</div><div class="d">前半段了解你對理想對象的條件與偏好。</div></div>'+
-        '<div class="intro-card"><div class="k">關於我</div><div class="d">後半段了解你自己的特質與生活習慣。</div></div>'+
-      '</div>'+
-      '<button class="btn bnext start-cta" id="startBtn" style="width:100%">開始作答</button>'+
-    '</div>';
-  document.getElementById('startBtn').onclick=()=> {started=true;render();};
+  app.innerHTML='<div class="intro"><div class="intro-title">開始前先看看題目分段 ✨</div><div class="intro-grid"><div class="intro-card"><div class="k">關於你喜歡的女生</div><div class="d">前半段了解你對理想對象的條件與偏好。</div></div><div class="intro-card"><div class="k">關於我</div><div class="d">後半段了解你自己的特質與生活習慣。</div></div></div><button class="btn bnext start-cta" id="startBtn" style="width:100%">開始作答</button></div>';
+  document.getElementById('startBtn').onclick=()=>{started=true;render();};
 }
 
 function renderSectionIntro(section){
   const msg=section==='關於我'?'接下來了解你自己的特質與生活習慣。':'接下來了解你對理想對象的偏好與條件。';
-  app.innerHTML=
-    '<div class="intro">'+
-      '<div class="intro-title">下一段：'+esc(section)+'</div>'+
-      '<div class="intro-card"><div class="d">'+esc(msg)+'</div></div>'+
-      '<button class="btn bnext start-cta" id="sectionBtn" style="width:100%;margin-top:.85rem">繼續作答</button>'+
-    '</div>';
+  app.innerHTML='<div class="intro"><div class="intro-title">下一段：'+esc(section)+'</div><div class="intro-card"><div class="d">'+esc(msg)+'</div></div><button class="btn bnext start-cta" id="sectionBtn" style="width:100%;margin-top:.85rem">繼續作答</button></div>';
   document.getElementById('sectionBtn').onclick=()=>{pendingSectionIntro='';render();};
 }
 
@@ -233,100 +199,128 @@ function renderQ(){
   const q=QS[qi];
   const pct=Math.round((qi/QS.length)*100);
   const isLast=qi===QS.length-1;
-  
-  let hasAns=false;
-  if(q.type==='ageRange'){
-    const mn=parseInt(ans['__ageMin__'],10),mx=parseInt(ans['__ageMax__'],10);
-    hasAns=mn>=18 && mx>=18 && mn<=mx;
-  }else{
-    hasAns=(ans[q.id]||[]).length>0;
-  }
 
+  // 讀目前儲存值判斷 hasAns
+  let hasAns=false;
   let body='';
-  if(q.type==='ageRange'){
-    body=`<div class="age-range">
-      <input class="tinp" type="number" id="ageMin" value="${ans['__ageMin__']||''}" placeholder="最小"/>
-      <span>～</span>
-      <input class="tinp" type="number" id="ageMax" value="${ans['__ageMax__']||''}" placeholder="最大"/>
-    </div>`;
+
+  if(q.type==='nickname'){
+    const v=ans['__nickname__']||'';
+    hasAns=v.length>=2;
+    body='<input class="tinp" type="text" id="nickInp" maxlength="10" value="'+esc(v)+'" placeholder="'+esc(q.placeholder||'')+'"/>';
+  }else if(q.type==='ageRange'){
+    const mn=parseInt(ans['__ageMin__']||0,10),mx=parseInt(ans['__ageMax__']||0,10);
+    hasAns=mn>=18&&mx>=18&&mn<=mx;
+    body='<div class="age-range"><input class="tinp" type="number" id="ageMin" value="'+(ans['__ageMin__']||'')+'" placeholder="最小"/><span>～</span><input class="tinp" type="number" id="ageMax" value="'+(ans['__ageMax__']||'')+'" placeholder="最大"/></div>';
+  }else if(q.type==='profile'){
+    hasAns=true; // 照片介紹選填，永遠可以送出
+    const existingIntro=esc(ans['__intro__']||'');
+    body=
+      '<span class="profile-label" style="margin-top:0">📷 個人照片</span>'+
+      '<div class="photo-upload" id="photoUpload" onclick="document.getElementById(\'photoInput\').click()">'+
+        '<div style="font-size:2rem;margin-bottom:.3rem">📷</div>'+
+        '<div style="font-size:.85rem;font-weight:700;color:var(--muted)">點擊上傳照片</div>'+
+        '<div style="font-size:.75rem;color:var(--muted);margin-top:.2rem">JPG / PNG，建議正方形</div>'+
+        '<img id="photoPreview" class="photo-preview"/>'+
+      '</div>'+
+      '<input type="file" id="photoInput" accept="image/*" style="display:none"/>'+
+      '<span class="profile-label">✏️ 自我介紹</span>'+
+      '<textarea class="intro-area" id="introText" rows="4" placeholder="介紹一下自己！個性、興趣、想找什麼樣的對象都可以...">'+existingIntro+'</textarea>';
   }else{
     const sel=ans[q.id]||[];
+    hasAns=sel.length>0;
     body='<div class="opts">';
-    (q.opts||[]).forEach((o,i)=>{
+    (q.opts||[]).forEach(o=>{
       const isSel=sel.indexOf(o)!==-1;
-      // 【修正 1】使用 data 屬性存儲，避免 onclick 引號衝突
-      body += `<button class="opt ${isSel?'sel':''}" data-qid="${esc(q.id)}" data-opt="${esc(o)}"><span class="rdot"></span><span>${esc(o)}</span></button>`;
+      body+='<button class="opt '+(isSel?'sel':'')+'" data-qid="'+esc(q.id)+'" data-opt="'+esc(o)+'"><span class="rdot"></span><span>'+esc(o)+'</span></button>';
     });
-    body += '</div>';
+    body+='</div>';
   }
 
-  app.innerHTML=`
-    <div class="prog">
-      <div class="prog-meta"><span>第 ${qi+1} 題 / 共 ${QS.length} 題</span><span>💙 填答</span></div>
-      <div class="prog-bar"><div class="prog-fill" style="width:${pct}%"></div></div>
-    </div>
-    <div class="qcard">
-      <div class="qsec">✦ ${esc(q.section)}</div>
-      <span class="qnum">Q${String(qi+1).padStart(2,'0')}</span>
-      <div class="qtxt">${esc(q.label)}</div>
-      ${q.type!=='ageRange'?'<div class="qhint">✓ 可複選多個，盡量以自己能接受的條件都填寫</div>':''}
-      ${body}
-    </div>
-    <div class="nav">
-      ${qi>0?'<button class="btn bprev" id="btnPrev">← 上一題</button>':'<div></div>'}
-      <button class="btn bnext" id="btnNext" ${hasAns?'':'disabled'}>${isLast?'送出填答':'下一題 →'}</button>
-    </div>`;
+  const btnLabel=q.type==='profile'?'送出完成 💙':(isLast?'送出填答 💙':'下一題 →');
 
-  // 【修正 2】使用事件監聽器綁定，確保特殊符號選項可點擊
-  if(q.type==='ageRange'){
+  app.innerHTML=
+    '<div class="prog">'+
+      '<div class="prog-meta"><span>第 '+(qi+1)+' 題 / 共 '+QS.length+' 題</span><span>💙 填答</span></div>'+
+      '<div class="prog-bar"><div class="prog-fill" style="width:'+pct+'%"></div></div>'+
+    '</div>'+
+    '<div class="qcard">'+
+      '<div class="qsec">✦ '+esc(q.section)+'</div>'+
+      '<span class="qnum">Q'+String(qi+1).padStart(2,'0')+'</span>'+
+      '<div class="qtxt">'+esc(q.label)+'</div>'+
+      (q.type==='multi'?'<div class="qhint">✓ 可複選多個，盡量以自己能接受的條件都填寫</div>':'')+
+      body+
+    '</div>'+
+    '<div class="nav">'+
+      (qi>0?'<button class="btn bprev" id="btnPrev">← 上一題</button>':'')+
+      '<button class="btn bnext" id="btnNext" '+(hasAns?'':'disabled')+'>'+btnLabel+'</button>'+
+    '</div>';
+
+  window.scrollTo(0,0);
+
+  // 事件綁定
+  if(q.type==='nickname'){
+    const inp=document.getElementById('nickInp');
+    inp.addEventListener('input',function(){
+      ans['__nickname__']=inp.value.trim();
+      document.getElementById('btnNext').disabled=ans['__nickname__'].length<2;
+    });
+    setTimeout(()=>inp.focus(),60);
+  }else if(q.type==='ageRange'){
     const check=()=>{
-      saveAge();
+      ans['__ageMin__']=document.getElementById('ageMin').value;
+      ans['__ageMax__']=document.getElementById('ageMax').value;
       const mn=parseInt(ans['__ageMin__'],10),mx=parseInt(ans['__ageMax__'],10);
-      document.getElementById('btnNext').disabled=!(mn>=18 && mx>=18 && mn<=mx);
+      document.getElementById('btnNext').disabled=!(mn>=18&&mx>=18&&mn<=mx);
     };
     document.getElementById('ageMin').oninput=check;
     document.getElementById('ageMax').oninput=check;
-  } else {
-    document.querySelectorAll('.opt').forEach(btn => {
-      btn.onclick = () => {
-        const qid = btn.getAttribute('data-qid');
-        const opt = btn.getAttribute('data-opt');
-        toggleOpt(qid, opt);
+  }else if(q.type==='profile'){
+    document.getElementById('photoInput').onchange=function(e){
+      const file=e.target.files[0];if(!file)return;
+      const reader=new FileReader();
+      reader.onload=function(ev){
+        boyPhotoBase64=ev.target.result.split(',')[1];
+        boyPhotoMime=file.type||'image/jpeg';
+        const preview=document.getElementById('photoPreview');
+        preview.src=ev.target.result;preview.style.display='block';
+        document.getElementById('photoUpload').style.borderColor='var(--accent)';
       };
+      reader.readAsDataURL(file);
+    };
+  }else{
+    document.querySelectorAll('.opt').forEach(btn=>{
+      btn.onclick=()=>toggleOpt(btn.getAttribute('data-qid'),btn.getAttribute('data-opt'));
     });
   }
 
-  if(document.getElementById('btnPrev')) {
-    document.getElementById('btnPrev').onclick = () => {
-      if(q.type==='ageRange') saveAge();
-      qi--;
-      render();
-    };
+  if(document.getElementById('btnPrev')){
+    document.getElementById('btnPrev').onclick=()=>{qi--;render();};
   }
-
-  document.getElementById('btnNext').onclick = () => {
-    if(q.type==='ageRange') saveAge();
+  document.getElementById('btnNext').onclick=()=>{
+    // 按下一題前先把當前頁面的輸入值存起來
+    if(q.type==='profile'){
+      ans['__intro__']=(document.getElementById('introText')||{value:''}).value||'';
+    }
     next();
   };
-}
-
-function saveAge(){
-  const mn=document.getElementById('ageMin'),mx=document.getElementById('ageMax');
-  if(mn)ans['__ageMin__']=mn.value;if(mx)ans['__ageMax__']=mx.value;
 }
 
 function toggleOpt(qid,opt){
   if(!ans[qid])ans[qid]=[];
   const i=ans[qid].indexOf(opt);
   if(i>-1)ans[qid].splice(i,1);else ans[qid].push(opt);
-  render();
+  document.querySelectorAll('.opt[data-qid="'+qid+'"]').forEach(btn=>{
+    btn.classList.toggle('sel',ans[qid].indexOf(btn.getAttribute('data-opt'))!==-1);
+  });
+  document.getElementById('btnNext').disabled=(ans[qid]||[]).length===0;
 }
 
 function next(){
-  const q=QS[qi];
   if(qi<QS.length-1){
+    const prevSection=QS[qi].section;
     qi++;
-    if(QS[qi-1].section!==QS[qi].section)pendingSectionIntro=QS[qi].section;
+    if(QS[qi].section!==prevSection)pendingSectionIntro=QS[qi].section;
     render();
   }else{
     done=true;saveData();
@@ -334,19 +328,53 @@ function next(){
 }
 
 function saveData(){
-  app.innerHTML='<div class="loading"><div class="spin"></div><p>資料儲存中...</p></div>';
-  const age=ans['__ageMin__']+'-'+ans['__ageMax__'];
-  
-  const ordered=[];
+  app.innerHTML='<div class="loading"><div class="spin"></div><p>資料儲存中，請稍候…</p></div>';
+
+  // 確保從 ans 物件讀取所有值
+  const nickname=(ans['__nickname__']||'').trim();
+  const age=(ans['__ageMin__']||'')+'~'+(ans['__ageMax__']||'');
+  const intro=(ans['__intro__']||'').trim();
+
+  // 只送真正的題目答案，排除特殊 id
+  const SKIP_IDS=['__nickname__','__ageRange__','__profile__','__ageMin__','__ageMax__','__intro__'];
+  const answers={};
   QS.forEach(q=>{
-    if(q.id!=='__ageRange__') ordered.push(ans[q.id]||[]);
+    if(SKIP_IDS.indexOf(q.id)===-1) answers[q.id]=ans[q.id]||[];
   });
 
-  fetch(SCRIPT_URL,{
-    method:'POST',
-    mode:'no-cors',
-    body:JSON.stringify({type:'boy',age:age,answerList:ordered})
-  }).then(()=>renderResult());
+  const doPost=(photoUrl)=>{
+    return fetch(SCRIPT_URL,{
+      method:'POST',
+      headers:{'Content-Type':'text/plain'},
+      body:JSON.stringify({
+        type:'boy',
+        nickname:nickname,
+        age:age,
+        answers:answers,
+        photo:photoUrl,
+        intro:intro
+      })
+    });
+  };
+
+  if(boyPhotoBase64){
+    fetch(SCRIPT_URL,{
+      method:'POST',
+      headers:{'Content-Type':'text/plain'},
+      body:JSON.stringify({
+        type:'photo',
+        base64:boyPhotoBase64,
+        mimeType:boyPhotoMime,
+        fileName:(nickname||'boy')+'_'+Date.now()+'.jpg'
+      })
+    })
+    .then(r=>r.json())
+    .then(result=>doPost(result.url||''))
+    .then(()=>renderResult())
+    .catch(()=>doPost('').then(()=>renderResult()).catch(()=>renderResult()));
+  }else{
+    doPost('').then(()=>renderResult()).catch(()=>renderResult());
+  }
 }
 
 function renderResult(){
