@@ -251,10 +251,13 @@ function renderQ(){
     </div>`;
   }else{
     const sel=ans[q.id]||[];
-    body='<div class="opts">'+(q.opts||[]).map((o,i)=>{
+    body='<div class="opts">';
+    (q.opts||[]).forEach((o,i)=>{
       const isSel=sel.indexOf(o)!==-1;
-      return `<button class="opt ${isSel?'sel':''}" onclick="toggleOpt('${q.id}','${o}')"><span class="rdot"></span><span>${esc(o)}</span></button>`;
-    }).join('')+'</div>';
+      // 【修正 1】使用 data 屬性存儲，避免 onclick 引號衝突
+      body += `<button class="opt ${isSel?'sel':''}" data-qid="${esc(q.id)}" data-opt="${esc(o)}"><span class="rdot"></span><span>${esc(o)}</span></button>`;
+    });
+    body += '</div>';
   }
 
   app.innerHTML=`
@@ -270,10 +273,11 @@ function renderQ(){
       ${body}
     </div>
     <div class="nav">
-      ${qi>0?'<button class="btn bprev" onclick="saveAge();qi--;render()">← 上一題</button>':'<div></div>'}
-      <button class="btn bnext" id="btnNext" ${hasAns?'':'disabled'} onclick="next()">${isLast?'送出填答':'下一題 →'}</button>
+      ${qi>0?'<button class="btn bprev" id="btnPrev">← 上一題</button>':'<div></div>'}
+      <button class="btn bnext" id="btnNext" ${hasAns?'':'disabled'}>${isLast?'送出填答':'下一題 →'}</button>
     </div>`;
 
+  // 【修正 2】使用事件監聽器綁定，確保特殊符號選項可點擊
   if(q.type==='ageRange'){
     const check=()=>{
       saveAge();
@@ -282,7 +286,28 @@ function renderQ(){
     };
     document.getElementById('ageMin').oninput=check;
     document.getElementById('ageMax').oninput=check;
+  } else {
+    document.querySelectorAll('.opt').forEach(btn => {
+      btn.onclick = () => {
+        const qid = btn.getAttribute('data-qid');
+        const opt = btn.getAttribute('data-opt');
+        toggleOpt(qid, opt);
+      };
+    });
   }
+
+  if(document.getElementById('btnPrev')) {
+    document.getElementById('btnPrev').onclick = () => {
+      if(q.type==='ageRange') saveAge();
+      qi--;
+      render();
+    };
+  }
+
+  document.getElementById('btnNext').onclick = () => {
+    if(q.type==='ageRange') saveAge();
+    next();
+  };
 }
 
 function saveAge(){
@@ -299,8 +324,6 @@ function toggleOpt(qid,opt){
 
 function next(){
   const q=QS[qi];
-  if(q.type==='ageRange')saveAge();
-  
   if(qi<QS.length-1){
     qi++;
     if(QS[qi-1].section!==QS[qi].section)pendingSectionIntro=QS[qi].section;
